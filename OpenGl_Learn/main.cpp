@@ -1,5 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 #include <iostream>
 
 #include "stb_image.h"
@@ -79,8 +82,6 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	int width2, height2, nrComponents2;
-	// Чтобы изображение загружалось перевернутым, так как OpenGL ожидает что координата 0.0 
-	//на оси Y будет находиться в нижней части изображения, но изображения обычно имеют 0.0 в верхней части оси Y
 	data = stbi_load("../Textures/poni.jpg", &width, &height, &nrComponents2, 0);
 
 	if (data) {
@@ -137,39 +138,35 @@ int main()
 	ourShader.setInt("texture1", 0);
 	ourShader.setInt("texture2", 1);
 
-	int invert = 0;
-	float opacity = 0.0, opacity2 = 0.0;
-	ourShader.setFloat("opacity", opacity);
-	ourShader.setFloat("opacity2", opacity2);
-	ourShader.setInt("invert", invert);
-
+	GLuint transLoc = glGetUniformLocation(ourShader.id, "transform");
+	
 	// Цикл рендера
 	//---------------------------
 	while (!glfwWindowShouldClose(window)) {
 		processInput(window);
 
-		srand(glfwGetTimerValue());
-		opacity = rand() % 2;
-		ourShader.setFloat("opacity", opacity);
-		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-			invert = 1;
-			ourShader.setInt("invert", invert);
-		}
-		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-			invert = 0;
-			ourShader.setInt("invert", invert);
-		}
-
 		glClearColor(0.3f, 0.5f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		glm::mat4 transform = glm::mat4(1.0f);
+		transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+		transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+		transform = glm::scale(transform, glm::vec3(0.5f, 0.5f, 0.5f));
+		glUniformMatrix4fv(transLoc, 1, GL_FALSE, glm::value_ptr(transform));
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
-
+		
 		ourShader.use();
 		glBindVertexArray(VAO); 
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // Данная функция сама наложит текстуру на наш элемент
+
+		transform = glm::mat4(1.0f);
+		transform = glm::translate(transform, glm::vec3(-0.5f, 0.5f, 0.0f));
+		transform = glm::scale(transform, glm::vec3(sin(glfwGetTime())));
+		glUniformMatrix4fv(transLoc, 1, GL_FALSE, glm::value_ptr(transform));
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0); // Данная функция сама наложит текстуру на наш элемент
 
 		glfwSwapBuffers(window);
