@@ -37,7 +37,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	// Компилируем шейдеры
 	//-----------------------------
 	GLuint vertex, fragment;
-	int success;
+	int success = 0;
 	char infoLog[512];
 
 	vertex = glCreateShader(GL_VERTEX_SHADER);
