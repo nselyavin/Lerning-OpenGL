@@ -10,6 +10,6 @@ public:
 
 	void setupBuffers();
 
-    void draw();
+    void draw(GLFWwindow* window);
 };
 

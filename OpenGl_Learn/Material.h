@@ -24,13 +24,13 @@ public:
 	Material(Shader *shader);
 
 	void loadTexture(const char* path, GLuint format = MT_JPG);
-
 	void setTextureParametr(GLuint texture, GLuint pname, GLuint value);
+	void activateTexture(GLFWwindow *window);
 	
 	std::vector <GLuint>& getTexturesVec();
 
 	size_t getAmountTextures();
 
-	void activateTexture();
+	Shader* getShader();
 };
 

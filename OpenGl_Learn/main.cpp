@@ -1,8 +1,5 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
 #include <iostream>
 
 #include "stb_image.h"
@@ -11,11 +8,10 @@
 #include "Camera.h"
 #include "Cube.h"
 
-void framebufferSize(GLFWwindow* window, int width, int height); 
-
 const GLuint SCR_WIDTH = 800;
 const GLuint SCR_HEIGHT = 600;
 
+void framebufferSize(GLFWwindow* window, int width, int height); 
 
 int main() 
 {
@@ -52,14 +48,15 @@ int main()
 	Shader ourShader("../ShaderPrograms/vertexShader.vert", "../ShaderPrograms/fragmentShader.frag");
 	ourShader.use();
 	ourShader.setInt("texture1", 0);
-	ourShader.setInt("texture2", 1);
 
 	Material* cubeMaterial = new Material(&ourShader);
-	cubeMaterial->loadTexture("../Textures/container.jpg", MT_JPG);
 	cubeMaterial->loadTexture("../Textures/poni.jpg", MT_JPG);
 
-	Cube cube;
+	Cube cube(0.0f, 0.0f, -5.0f);
 	cube.setMaterial(cubeMaterial);
+
+	// Активация теста глубины
+	glEnable(GL_DEPTH_TEST);
 
 	// Цикл рендера
 	//---------------------------
@@ -68,7 +65,7 @@ int main()
 		glClearColor(0.3f, 0.5f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		cube.draw();
+		cube.draw(window);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
