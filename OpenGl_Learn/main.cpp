@@ -1,4 +1,4 @@
-#include <glad/glad.h>
+п»ї#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
 
@@ -15,7 +15,7 @@ void framebufferSize(GLFWwindow* window, int width, int height);
 
 int main() 
 {
-	// Инициализация и конфигурирование
+	// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Рё РєРѕРЅС„РёРіСѓСЂРёСЂРѕРІР°РЅРёРµ
 	//-------------------------------
 	glfwInit();
 	
@@ -23,7 +23,7 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	
-	// Создание окна
+	// РЎРѕР·РґР°РЅРёРµ РѕРєРЅР°
 	// ------------------------------
 	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "main", NULL, NULL);
 	if (!window) {
@@ -35,7 +35,7 @@ int main()
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebufferSize);
 
-	// Загрузка указателей 
+	// Р—Р°РіСЂСѓР·РєР° СѓРєР°Р·Р°С‚РµР»РµР№ 
 	//-------------------------------
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "GLAD::LOADGL::FAILED\n";
@@ -43,42 +43,43 @@ int main()
 		return -1;
 	}
 
-	// Привязка и компиляция шейдеров
-	//--------------------------------
-	Shader ourShader("../ShaderPrograms/vertexShader.vert", "../ShaderPrograms/fragmentShader.frag");
-	ourShader.use();
-	ourShader.setInt("texture1", 0);
+	// Creating shader and material
+	Shader *ourShader = new Shader("../ShaderPrograms/vertexShader.vert", "../ShaderPrograms/fragmentShader.frag");
+	ourShader->use();
+	ourShader->setInt("texture1", 0);
 
-	Material* cubeMaterial = new Material(&ourShader);
-	cubeMaterial->loadTexture("../Textures/poni.jpg", MT_JPG);
+	Material *material = new Material(ourShader);
+    material->loadTexture("../Textures/container.jpg", MT_JPG);
 
-	Cube cube(0.0f, 0.0f, -5.0f);
-	cube.setMaterial(cubeMaterial);
+	// Add cube and connect with material
+	//---------------------------
+	Cube cube(0.0f, -0.4f, -3.5f);
+	cube.setMaterial(material);
 
-	// Активация теста глубины
+	// Activate depth test
 	glEnable(GL_DEPTH_TEST);
 
-	// Цикл рендера
+	// Cicle of render
 	//---------------------------
 	while (!glfwWindowShouldClose(window)) {
 
 		glClearColor(0.3f, 0.5f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		ourShader->use();
+
 		cube.draw(window);
+		
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
-	// Освобождение ресурсов (опционально)
-	//------------------------
-
 	glfwTerminate();
 	return 0;
 }
 
-// Вызывается данная функция при изменении размера окна
+// Р’С‹Р·С‹РІР°РµС‚СЃСЏ РґР°РЅРЅР°СЏ С„СѓРЅРєС†РёСЏ РїСЂРё РёР·РјРµРЅРµРЅРёРё СЂР°Р·РјРµСЂР° РѕРєРЅР°
 //-----------------------------
 void framebufferSize(GLFWwindow* window, int width, int height)
 {

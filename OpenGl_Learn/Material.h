@@ -23,14 +23,16 @@ class Material
 public:
 	Material(Shader *shader);
 
+	// load texture to matirial. Will adding into textures array
 	void loadTexture(const char* path, GLuint format = MT_JPG);
+	// Set gl texture parametr
 	void setTextureParametr(GLuint texture, GLuint pname, GLuint value);
+
+	// Bind all textures in array to texture unit
 	void activateTexture(GLFWwindow *window);
 	
 	std::vector <GLuint>& getTexturesVec();
-
 	size_t getAmountTextures();
-
 	Shader* getShader();
 };
 

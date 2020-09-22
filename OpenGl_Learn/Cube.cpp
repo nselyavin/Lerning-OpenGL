@@ -11,13 +11,14 @@ Cube::Cube(float posx, float posy, float posz) : Geometry(posx, posy, posz) {
 
 void Cube::draw(GLFWwindow* window)
 {
-	material->activateTexture(window);
+	if (material) {
+		material->activateTexture(window);
+	}
 	acceptTransform(window);
-
+	
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 }
-
 
 void Cube::setupBuffers() {
 	float verticles[] = {

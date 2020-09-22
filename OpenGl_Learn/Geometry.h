@@ -51,14 +51,14 @@ public:
 
 protected:
 	void acceptTransform(GLFWwindow *window) {
-
+		
 		glm::mat4 view = glm::mat4(1.0f);
 		view = glm::translate(view, glm::vec3(0.0f, 0.0f, 0.0f));
 		material->getShader()->setMat4("view", view);
 		
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, position);
-		model = glm::rotate(model, glm::radians((float)glfwGetTime() * 6), glm::vec3(1.0f));
+		model = glm::rotate(model, glm::radians((float)glfwGetTime() * 36), glm::vec3(1.0f));
 		material->getShader()->setMat4("model", model);
 		
 		glm::mat4 projection = glm::mat4(1.0f);
@@ -67,6 +67,7 @@ protected:
 		glfwGetFramebufferSize(window, &width, &height);
 		projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 		material->getShader()->setMat4("projection", projection);
+		
 	}
 };
 
