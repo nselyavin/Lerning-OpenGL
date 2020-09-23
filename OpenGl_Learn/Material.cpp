@@ -4,6 +4,7 @@ Material::Material(Shader* shader)
 {
 	this->shader = shader;
 	textures.resize(0);
+	loadTexture("../Textures/DefaultUV.jpg", MT_JPG);
 }
 
 void Material::loadTexture(const char* path, GLuint format)
@@ -11,31 +12,20 @@ void Material::loadTexture(const char* path, GLuint format)
 	if (textures.size() <= MAX_TEXTURES) {
 		GLuint texture;
 		glGenTextures(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		int width, height, nrComponents;
-		stbi_set_flip_vertically_on_load(true);
-		unsigned char* data = stbi_load(path, &width, &height, &nrComponents, 0);
-		if (data) {
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-			glGenerateMipmap(GL_TEXTURE_2D);
-		}
-		else {
-			std::cout << "ERROR::MATERIAL::IMAGE::FAILED_LOAD\n";
-		}
-
-		stbi_image_free(data);
+		bindAndSetUpTexture(texture, path, format);
 		textures.push_back(texture);
 	}
 	else {
 		std::cout << "WARNING::TEXTURE_STACK_OVERFLOW\n";
 	}
 }
+
+void Material::replaceTextureImage(GLuint texturePos, const char* path, GLuint format)
+{
+	bindAndSetUpTexture(textures[texturePos], path, format);
+}
+
+
 
 std::vector <GLuint>& Material::getTexturesVec() {
 	return textures;
@@ -51,9 +41,9 @@ Shader* Material::getShader()
 	return shader;
 }
 
-void Material::setTextureParametr(GLuint index, GLuint pname, GLuint value)
+void Material::setTextureParametr(GLuint texturePos, GLuint pname, GLuint value)
 {
-	glBindTexture(GL_TEXTURE_2D, textures[index]);
+	glBindTexture(GL_TEXTURE_2D, textures[texturePos]);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 }
 

@@ -49,15 +49,22 @@ int main()
 	ourShader->setInt("texture1", 0);
 
 	Material *material = new Material(ourShader);
-    material->loadTexture("../Textures/container.jpg", MT_JPG);
+    material->replaceTextureImage(0, "../Textures/container.jpg", MT_JPG);
+	Material* material2 = new Material(ourShader);
 
 	// Add cube and connect with material
 	//---------------------------
 	Cube cube(0.0f, -0.4f, -3.5f);
+	Cube cube2(1.0f, -0.4f, -5.5f);
 	cube.setMaterial(material);
+	cube2.setMaterial(material2);
 
 	// Activate depth test
 	glEnable(GL_DEPTH_TEST);
+
+	glm::mat4 view = glm::mat4(1.0f);
+	ourShader->setMat4("view", view);
+
 
 	// Cicle of render
 	//---------------------------
@@ -69,7 +76,18 @@ int main()
 		ourShader->use();
 
 		cube.draw(window);
-		
+		cube2.draw(window);
+
+		cube.setPostition(glm::vec3(0.0f, 0.0f, -4-glfwGetTime()/10.0f));
+		cube2.setRotation(glm::vec3(45.0f, glfwGetTime(), glfwGetTime()));
+
+		// ToDo избавиться от изменения перспективы в main
+		//-----------------------------
+		int widthFrameBuff, heightFrameBuff;
+		glm::mat4 projection = glm::mat4(1.0f);
+		glfwGetFramebufferSize(window, &widthFrameBuff, &heightFrameBuff);
+		projection = glm::perspective(glm::radians(45.0f), (float)widthFrameBuff / (float)heightFrameBuff, 0.1f, 100.0f);
+		ourShader->setMat4("projection", projection);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

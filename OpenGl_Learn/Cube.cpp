@@ -11,8 +11,8 @@ Cube::Cube(float posx, float posy, float posz) : Geometry(posx, posy, posz) {
 
 void Cube::draw(GLFWwindow* window)
 {
-	if (material) {
-		material->activateTexture(window);
+	if (p_material) {
+		p_material->activateTexture(window);
 	}
 	acceptTransform(window);
 	
